@@ -59,7 +59,7 @@
           "write_file": "/home/vagrant/dev/CLI_write_commands.txt",
           "db": {
             "user": "root",
-            "password": "",
+            "password": "root",
             "host": "127.0.0.1",
             "database": "sonata",
             "raise_on_warnings": true,

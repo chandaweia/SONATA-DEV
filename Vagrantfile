@@ -9,48 +9,45 @@
 Vagrant.configure(2) do |config|
 
   # 64 bit Vagrant Box
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "ubuntu/bionic64"
+
+  # Adding name
+  config.vm.define "SONATA-DEV-TEST"
 
   ## Guest Config
   config.vm.hostname = "vighata"
-  config.vm.network "forwarded_port", guest: 8886, host: 8886
+  config.vm.network "forwarded_port", guest: 8887, host: 8887
   config.ssh.forward_x11 = true
 
   ## Provisioning
   config.vm.provision "shell", inline: <<-SHELL
-    sudo apt-get update
-    sudo apt-get install python-setuptools
-    sudo easy_install-2.7 pip==20.3.4
-    sudo apt-get install -y python-dev
-    sudo apt-get install -y apache2-utils
-    sudo apt-get install -y git
-    # The commands below are for assignment 2. We expect that the
-    # lines above were already executed successfully during assignment 1.
-    # If you are starting a new vm, uncomment the lines above that
-    # start with sudo.
-     sudo apt-get install -y software-properties-common
-     sudo add-apt-repository ppa:openjdk-r/ppa
-     sudo apt-get update
-     sudo apt-get install -y python-dateutil
-     sudo -H pip install test_helper netaddr
-     sudo -H pip install coloredlogs
-     pip install --user mysql-connector-python
-     pip install --user scipy
-     sudo apt-get install -y python-matplotlib
-     sudo apt-get install -y mininet
-     sudo apt-get install -y openjdk-8-jre
-     wget http://d3kbcqa49mib13.cloudfront.net/spark-1.6.1-bin-hadoop2.6.tgz
-     tar xvf spark-1.6.1-bin-hadoop2.6.tgz
-     mv spark-1.6.1-bin-hadoop2.6 spark
-     rm spark-1.6.1-bin-hadoop2.6.tgz
-     sudo apt-get install -y vim-gtk
+  sudo apt-get update
+  sudo apt-get install python-setuptools
+  sudo apt-get install -y python-dev
+  sudo apt-get install -y python-pip
+  sudo apt-get install -y apache2-utils
+  sudo apt-get install -y -q openjdk-8-jdk
+  sudo apt-get update
+  sudo apt-get install -y python-dateutil python-netaddr
+  sudo -H pip install test_helper netaddr
+  sudo -H pip install coloredlogs
+  pip install --user mysql-connector-python==8.0.19
+  pip install --user scipy
+  sudo apt-get install -y python-matplotlib
+  sudo apt-get install -y mininet
+  wget https://archive.apache.org/dist/spark/spark-3.0.0/spark-3.0.0-bin-hadoop2.7.tgz
+  # tar xvf spark-1.6.1-bin-hadoop2.6.tgz
+  tar xvf spark-3.0.0-bin-hadoop2.7.tgz
+  mv spark-3.0.0-bin-hadoop2.7 spark
+  rm park-3.0.0-bin-hadoop2.7.tgz
+  sudo apt-get install -y vim-gtk
   SHELL
 
   # mount platform directory
   config.vm.synced_folder ".", "/home/vagrant/dev"
 
   config.vm.provision :shell, privileged: false, :path => "setup/basic-setup.sh"
-  config.vm.provision :shell, privileged: false, :path => "setup/ovs-setup.sh"
+  #config.vm.provision :shell, privileged: false, :path => "setup/ovs-setup.sh"
   config.vm.provision :shell, privileged: false, :path => "setup/ryu-setup.sh"
   config.vm.provision :shell, privileged: false, :path => "setup/kafka-setup.sh"
   config.vm.provision :shell, privileged: false, :path => "setup/p4-setup.sh"
@@ -66,7 +63,7 @@ Vagrant.configure(2) do |config|
   ## CPU & RAM
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["modifyvm", :id, "--cpuexecutioncap", "100"]
-    vb.memory = 4096
-    vb.cpus = 2
+    vb.memory = 32768
+    vb.cpus = 8
   end
 end
